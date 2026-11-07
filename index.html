@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f6f7f4">
+    <meta name="description" content="A quiet space to plan your study days and keep your habits on track.">
+    <title>Daymark — study planner</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="app.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Daymark home">
+          <span class="brand-mark" aria-hidden="true">d</span>
+          <span>daymark</span>
+        </a>
+        <div class="topbar-actions">
+          <span class="save-status"><span class="status-dot"></span> saved on this device</span>
+          <button class="icon-button" id="backup-button" type="button" aria-label="Backup and restore" title="Backup and restore">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v5h14v-5"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="view active" id="calendar-view" aria-labelledby="calendar-heading">
+          <div class="calendar-heading-row">
+            <div>
+              <p class="eyebrow" id="today-label"></p>
+              <h1 id="calendar-heading">Your month</h1>
+            </div>
+            <button class="primary-button compact" id="new-task-button" type="button">
+              <span aria-hidden="true">＋</span> Plan
+            </button>
+          </div>
+
+          <div class="calendar-toolbar">
+            <button class="text-button" id="today-button" type="button">Today</button>
+            <div class="month-controls">
+              <button class="icon-button" id="previous-month" type="button" aria-label="Previous month">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <h2 id="month-title" aria-live="polite"></h2>
+              <button class="icon-button" id="next-month" type="button" aria-label="Next month">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+            <button class="text-button" id="select-days-button" type="button">Select days</button>
+          </div>
+
+          <div class="calendar-wrap">
+            <div class="weekdays" aria-hidden="true">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+            <div class="calendar-grid" id="calendar-grid" role="grid" aria-label="Monthly study calendar"></div>
+          </div>
+
+          <div class="selection-bar" id="selection-bar" hidden>
+            <span id="selection-count">0 days selected</span>
+            <button class="text-button" id="cancel-selection" type="button">Cancel</button>
+            <button class="primary-button compact" id="plan-selected" type="button">Add task</button>
+          </div>
+          <p class="calendar-hint">Tap a day to plan · long-press to select several</p>
+        </section>
+
+        <section class="view" id="insights-view" aria-labelledby="insights-heading" hidden>
+          <div class="calendar-heading-row">
+            <div>
+              <p class="eyebrow" id="insights-period"></p>
+              <h1 id="insights-heading">Your progress</h1>
+            </div>
+            <button class="icon-button" id="export-button" type="button" aria-label="Export backup" title="Export backup">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5M5 19h14"/></svg>
+            </button>
+          </div>
+          <div id="dashboard-content"></div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Main navigation">
+        <button class="nav-item active" type="button" data-view="calendar-view" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17"/></svg>
+          <span>Calendar</span>
+        </button>
+        <button class="nav-item" type="button" data-view="insights-view">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg>
+          <span>Progress</span>
+        </button>
+      </nav>
+    </div>
+
+    <dialog class="task-dialog" id="task-dialog">
+      <form id="task-form">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow" id="dialog-eyebrow">Study plan</p>
+            <h2 id="dialog-title">Add a task</h2>
+          </div>
+          <button class="icon-button" id="close-dialog" type="button" aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <label class="field-label" for="task-title">What will you study?</label>
+        <input class="text-input" id="task-title" name="title" maxlength="80" placeholder="e.g. Revise organic chemistry" required>
+        <div class="field-row">
+          <div class="field-grow">
+            <label class="field-label" for="task-subject">Subject</label>
+            <select class="text-input" id="task-subject" name="subject"></select>
+          </div>
+          <div class="duration-field">
+            <label class="field-label" for="task-minutes">Minutes</label>
+            <input class="text-input" id="task-minutes" name="minutes" type="number" min="5" max="1440" step="5" value="60">
+          </div>
+        </div>
+        <label class="field-label">Label color</label>
+        <div class="color-picker" id="color-picker" role="group" aria-label="Choose label color"></div>
+        <label class="field-label date-label" for="task-date-input">Scheduled days</label>
+        <div class="date-add-row">
+          <input class="text-input" id="task-date-input" type="date">
+          <button class="secondary-button" id="add-date-button" type="button">Add day</button>
+        </div>
+        <div class="date-chips" id="task-date-chips" aria-live="polite"></div>
+        <div class="dialog-actions">
+          <button class="text-button danger-button" id="delete-task-button" type="button" hidden>Delete</button>
+          <span class="action-spacer"></span>
+          <button class="secondary-button" id="cancel-dialog" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Save task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="task-dialog backup-dialog" id="backup-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Your data</p>
+          <h2>Backup & restore</h2>
+        </div>
+        <button class="icon-button" id="close-backup-dialog" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <p class="dialog-copy">Your plans stay on this device. Export a backup to move them to another device.</p>
+      <div class="backup-actions">
+        <button class="secondary-button" id="backup-export" type="button">Export backup</button>
+        <button class="secondary-button" id="backup-import-button" type="button">Import backup</button>
+        <input id="backup-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <p class="backup-message" id="backup-message" role="status"></p>
+    </dialog>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
