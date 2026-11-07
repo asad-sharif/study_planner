@@ -24,6 +24,23 @@ const $ = (selector) => document.querySelector(selector);
 const calendarGrid = $("#calendar-grid");
 const taskDialog = $("#task-dialog");
 
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  const nextTheme = isDark ? "light" : "dark";
+  $("#theme-toggle").setAttribute("aria-label", `Switch to ${nextTheme} theme`);
+  $("#theme-toggle").title = `Switch to ${nextTheme} theme`;
+  $("#theme-color-meta").content = isDark ? "#121714" : "#f6f7f4";
+}
+
+let theme = "light";
+try {
+  theme = localStorage.getItem("daymark-theme") === "dark" ? "dark" : "light";
+} catch (error) {
+  console.error("Could not read the saved theme preference:", error);
+}
+applyTheme(theme);
+
 function dateKey(date) {
   // Keep calendar dates local so timezone offsets cannot shift a selected day.
   const year = date.getFullYear();
@@ -76,7 +93,9 @@ function colorFor(value) {
 function renderCalendar() {
   const year = monthCursor.getFullYear();
   const month = monthCursor.getMonth();
-  $("#month-title").textContent = monthCursor.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  const monthLabel = monthCursor.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  $("#month-title").textContent = monthLabel;
+  $("#calendar-heading").textContent = monthLabel;
   $("#today-label").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
   const firstDay = new Date(year, month, 1);
   const offset = (firstDay.getDay() + 6) % 7;
@@ -98,7 +117,7 @@ function renderCalendar() {
     if (date.getMonth() !== month) classes.push("outside-month");
     if (key === today) classes.push("today");
     if (selectedDates.includes(key)) classes.push("selected");
-    const taskRows = tasks.slice(0, 3).map((task) => {
+    const taskRows = tasks.map((task) => {
       const color = colorFor(task.color).value;
       const done = Boolean(task.done?.[key]);
       return `<div class="task-row" style="--task-color:${color};--task-bg:${color}18;--task-ink:${color}">
@@ -106,10 +125,9 @@ function renderCalendar() {
         <button class="task-done${done ? " completed" : ""}" type="button" data-complete="${escapeHtml(task.id)}" data-date="${key}" aria-label="${done ? "Mark incomplete" : "Mark complete"}: ${escapeHtml(task.title)}">${done ? '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m2 6 2.5 2.5L10 3"/></svg>' : ""}</button>
       </div>`;
     }).join("");
-    const more = tasks.length > 3 ? `<span class="more-tasks">+${tasks.length - 3} more</span>` : "";
     return `<div class="${classes.join(" ")}" role="gridcell" tabindex="0" data-day="${key}" aria-label="${date.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}${tasks.length ? `, ${tasks.length} tasks` : ""}">
       <div class="day-head"><span class="day-number">${date.getDate()}</span>${tasks.length ? `<span class="day-total">${completed}/${tasks.length}</span>` : ""}</div>
-      <div class="day-tasks">${taskRows}${more}</div>
+      <div class="day-tasks">${taskRows}</div>
     </div>`;
   }).join("");
 }
@@ -382,6 +400,15 @@ $("#today-button").addEventListener("click", () => {
   renderCalendar();
 });
 $("#new-task-button").addEventListener("click", () => openTaskDialog([today]));
+$("#theme-toggle").addEventListener("click", () => {
+  theme = theme === "dark" ? "light" : "dark";
+  applyTheme(theme);
+  try {
+    localStorage.setItem("daymark-theme", theme);
+  } catch (error) {
+    console.error("Could not save the theme preference:", error);
+  }
+});
 $("#select-days-button").addEventListener("click", () => {
   selectionMode = !selectionMode;
   selectedDates = [];

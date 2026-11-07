@@ -1,4 +1,4 @@
-const CACHE_NAME = "daymark-static-v1";
+const CACHE_NAME = "daymark-static-v2";
 const APP_FILES = ["./", "./index.html", "./app.css", "./app.js", "./manifest.webmanifest", "./icon.svg"];
 
 // Cache the app shell so it remains available when the network is down.

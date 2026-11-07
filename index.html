@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#f6f7f4">
+    <meta name="theme-color" content="#f6f7f4" id="theme-color-meta">
     <meta name="description" content="A quiet space to plan your study days and keep your habits on track.">
     <title>Daymark — study planner</title>
     <link rel="manifest" href="manifest.webmanifest">
@@ -19,6 +19,10 @@
         </a>
         <div class="topbar-actions">
           <span class="save-status"><span class="status-dot"></span> saved on this device</span>
+          <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
+          </button>
           <button class="icon-button" id="backup-button" type="button" aria-label="Backup and restore" title="Backup and restore">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v5h14v-5"/></svg>
           </button>
@@ -30,7 +34,7 @@
           <div class="calendar-heading-row">
             <div>
               <p class="eyebrow" id="today-label"></p>
-              <h1 id="calendar-heading">Your month</h1>
+              <h1 id="calendar-heading"></h1>
             </div>
             <button class="primary-button compact" id="new-task-button" type="button">
               <span aria-hidden="true">＋</span> Plan
@@ -43,7 +47,7 @@
               <button class="icon-button" id="previous-month" type="button" aria-label="Previous month">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
               </button>
-              <h2 id="month-title" aria-live="polite"></h2>
+              <h2 class="visually-hidden" id="month-title" aria-live="polite"></h2>
               <button class="icon-button" id="next-month" type="button" aria-label="Next month">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
               </button>
